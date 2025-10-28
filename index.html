@@ -57,7 +57,13 @@
 
   .ending{margin-top:18px;border:1px solid var(--border);background:rgba(0,0,0,.6);border-radius:16px;padding:16px}
   .ending h2{margin:0 0 6px 0;font-size:22px;color:#f6c1ff}
-  .cta{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .cta{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px;align-items:center}
+  .qr{
+    display:flex; flex-direction:column; align-items:center; gap:8px;
+    border:1px dashed var(--soft); border-radius:12px; padding:12px;
+    background:rgba(0,0,0,.35)
+  }
+  .qr img{max-width:260px; width:100%; height:auto; border-radius:8px; display:block}
   .primary{border:1px solid #9333ea;background:rgba(147,51,234,.15)}
   .primary:hover{background:rgba(147,51,234,.25)}
 
@@ -125,15 +131,12 @@
 
 <script>
 /*** CONFIG ***/
-const DISCORD_LINK = "https://discord.gg/BjzSyVxbju"; // 
+const DISCORD_LINK = "https://discord.gg/BjzSyVxbju"; // your invite
 
 // Basic +2 mods, always roll with advantage
 const MODS = { force: 2, finesse: 2, insight: 2, will: 2 };
 
-// Scenes/structure.
-// - if a choice has "check", it branches by success/fail to scene ids.
-// - otherwise "to" goes directly.
-// Endings are scenes with type: 'ending'.
+// Scenes & endings (same content as before)
 const SCENES = {
   start: {
     title: "Festival of Valor - Valor Plaza, Upper Sharn",
@@ -145,162 +148,100 @@ A cracking note splits the sky. Crystal blooms across a tower like frost becomin
       { label: "Listen, does the crystal whisper? (Insight check DC 10)", check: { stat: "insight", dc: 10, success: "nyxis_hint", fail: "mind_rattle" } }
     ]
   },
-
-  civ_ok: {
-    title: "Perimeter Set",
-    text: "You shepherd families behind the sigil boundary. The Bind steadies hearts. Medics from House Vitae move in.",
-    choices: [
-      { label: "Coordinate with Flux to clear the lightning rail (Insight DC 11)", check: { stat: "insight", dc: 11, success: "rail_clear", fail: "rail_clog" } },
-      { label: "Signal the Amethyst Knight for support", to: "knight_arrives" }
+  civ_ok: { title:"Perimeter Set", text:"You shepherd families behind the sigil boundary. The Bind steadies hearts. Medics from House Vitae move in.",
+    choices:[
+      { label:"Coordinate with Flux to clear the lightning rail (Insight DC 11)", check:{ stat:"insight", dc:11, success:"rail_clear", fail:"rail_clog" } },
+      { label:"Signal the Amethyst Knight for support", to:"knight_arrives" }
     ]
   },
-
-  civ_scatter: {
-    title: "Panic",
-    text: "The crowd breaks. Someone trips at the sigil’s edge. You pull two clear, but fear spreads faster than glass.",
-    choices: [
-      { label: "Bark orders, steel your voice (Will DC 12)", check: { stat: "will", dc: 12, success: "civ_ok", fail: "mirror_lane" } },
-      { label: "Abandon the perimeter, sprint to the shard-heart", to: "heart_bite" }
+  civ_scatter:{ title:"Panic", text:"The crowd breaks. Someone trips at the sigil’s edge. You pull two clear, but fear spreads faster than glass.",
+    choices:[
+      { label:"Bark orders, steel your voice (Will DC 12)", check:{ stat:"will", dc:12, success:"civ_ok", fail:"mirror_lane" } },
+      { label:"Abandon the perimeter, sprint to the shard-heart", to:"heart_bite" }
     ]
   },
-
-  heart_cut: {
-    title: "Supply Lines Severed",
-    text: "Runes flare as you slice the crystal’s feed. The bloom dims, the ground stops singing.",
-    choices: [
-      { label: "Push deeper toward the core (Will DC 12)", check: { stat: "will", dc: 12, success: "core_glow", fail: "mind_rattle" } },
-      { label: "Fall back, regroup the civilians", to: "civ_ok" }
+  heart_cut:{ title:"Supply Lines Severed", text:"Runes flare as you slice the crystal’s feed. The bloom dims, the ground stops singing.",
+    choices:[
+      { label:"Push deeper toward the core (Will DC 12)", check:{ stat:"will", dc:12, success:"core_glow", fail:"mind_rattle" } },
+      { label:"Fall back, regroup the civilians", to:"civ_ok" }
     ]
   },
-
-  heart_bite: {
-    title: "Backlash",
-    text: "Shards leap like teeth. Your hands ring. You drive them off, but the heart learns your rhythm.",
-    choices: [
-      { label: "Switch tactics: finesse the lines instead (Finesse DC 11)", check: { stat: "finesse", dc: 11, success: "heart_cut", fail: "mirror_lane" } },
-      { label: "Call for help on open comms", to: "knight_arrives" }
+  heart_bite:{ title:"Backlash", text:"Shards leap like teeth. Your hands ring. You drive them off, but the heart learns your rhythm.",
+    choices:[
+      { label:"Switch tactics: finesse the lines instead (Finesse DC 11)", check:{ stat:"finesse", dc:11, success:"heart_cut", fail:"mirror_lane" } },
+      { label:"Call for help on open comms", to:"knight_arrives" }
     ]
   },
-
-  nyxis_hint: {
-    title: "A Voice in the Glass",
-    text: "A symmetry in your name answers from inside the shard. “Step left. Do not look back.” The crowd opens.",
-    choices: [
-      { label: "Follow the instruction (Will DC 10)", check: { stat: "will", dc: 10, success: "mirror_skip", fail: "mirror_lane" } },
-      { label: "Reject the voice, trust procedure", to: "civ_ok" }
+  nyxis_hint:{ title:"A Voice in the Glass", text:"A symmetry in your name answers from inside the shard. “Step left. Do not look back.” The crowd opens.",
+    choices:[
+      { label:"Follow the instruction (Will DC 10)", check:{ stat:"will", dc:10, success:"mirror_skip", fail:"mirror_lane" } },
+      { label:"Reject the voice, trust procedure", to:"civ_ok" }
     ]
   },
-
-  mind_rattle: {
-    title: "Echo",
-    text: "The crystal hum matches your pulse. For a moment, you’re not sure whose fear you feel.",
-    choices: [
-      { label: "Breathe, re-center (Will DC 10)", check: { stat: "will", dc: 10, success: "civ_ok", fail: "mirror_lane" } },
-      { label: "Muscle through it - hit the lines again", to: "heart_bite" }
+  mind_rattle:{ title:"Echo", text:"The crystal hum matches your pulse. For a moment, you’re not sure whose fear you feel.",
+    choices:[
+      { label:"Breathe, re-center (Will DC 10)", check:{ stat:"will", dc:10, success:"civ_ok", fail:"mirror_lane" } },
+      { label:"Muscle through it - hit the lines again", to:"heart_bite" }
     ]
   },
-
-  rail_clear: {
-    title: "Rail Junction Rerouted",
-    text: "Flux conductors light the path, a train clears the plaza. Space to work. The bloom shrinks.",
-    choices: [
-      { label: "Coordinate with the Amethyst Knight to finish the heart", to: "knight_arrives" },
-      { label: "Hold position and guard triage", to: "valor_ending" }
+  rail_clear:{ title:"Rail Junction Rerouted", text:"Flux conductors light the path, a train clears the plaza. Space to work. The bloom shrinks.",
+    choices:[
+      { label:"Coordinate with the Amethyst Knight to finish the heart", to:"knight_arrives" },
+      { label:"Hold position and guard triage", to:"valor_ending" }
     ]
   },
-
-  rail_clog: {
-    title: "Gridlock",
-    text: "A stalled cart pins the switch. You’re losing time.",
-    choices: [
-      { label: "Force the switch physically (Force DC 12)", check: { stat: "force", dc: 12, success: "rail_clear", fail: "mirror_lane" } },
-      { label: "Abandon the rails, protect who you can", to: "civ_ok" }
+  rail_clog:{ title:"Gridlock", text:"A stalled cart pins the switch. You’re losing time.",
+    choices:[
+      { label:"Force the switch physically (Force DC 12)", check:{ stat:"force", dc:12, success:"rail_clear", fail:"mirror_lane" } },
+      { label:"Abandon the rails, protect who you can", to:"civ_ok" }
     ]
   },
-
-  mirror_lane: {
-    title: "Mirror Lane",
-    text: "Reflections step out wearing your face. They whisper bargains, each one a perfect, terrible you.",
-    choices: [
-      { label: "Avert your eyes, move by touch (Finesse DC 12)", check: { stat: "finesse", dc: 12, success: "mirror_skip", fail: "glass_family" } },
-      { label: "Stare them down - who leads you? (Insight DC 12)", check: { stat: "insight", dc: 12, success: "nyxis_mark", fail: "glass_family" } }
+  mirror_lane:{ title:"Mirror Lane", text:"Reflections step out wearing your face. They whisper bargains, each one a perfect, terrible you.",
+    choices:[
+      { label:"Avert your eyes, move by touch (Finesse DC 12)", check:{ stat:"finesse", dc:12, success:"mirror_skip", fail:"glass_family" } },
+      { label:"Stare them down - who leads you? (Insight DC 12)", check:{ stat:"insight", dc:12, success:"nyxis_mark", fail:"glass_family" } }
     ]
   },
-
-  mirror_skip: {
-    title: "Eyes Down",
-    text: "You pass blind and true. The lane collapses behind you like a shed skin of light.",
-    choices: [
-      { label: "Go for the core while the path is open", to: "core_glow" },
-      { label: "Pull civilians through before it returns", to: "civ_ok" }
+  mirror_skip:{ title:"Eyes Down", text:"You pass blind and true. The lane collapses behind you like a shed skin of light.",
+    choices:[
+      { label:"Go for the core while the path is open", to:"core_glow" },
+      { label:"Pull civilians through before it returns", to:"civ_ok" }
     ]
   },
-
-  nyxis_mark: {
-    title: "Symmetry Kept",
-    text: "A single glyph settles under your skin. The mirrors nod, satisfied.",
-    choices: [
-      { label: "Use the mark to find weak seams (Insight DC 11)", check: { stat: "insight", dc: 11, success: "core_glow", fail: "heart_bite" } },
-      { label: "Scrub it away, this is wrong", to: "mind_rattle" }
+  nyxis_mark:{ title:"Symmetry Kept", text:"A single glyph settles under your skin. The mirrors nod, satisfied.",
+    choices:[
+      { label:"Use the mark to find weak seams (Insight DC 11)", check:{ stat:"insight", dc:11, success:"core_glow", fail:"heart_bite" } },
+      { label:"Scrub it away, this is wrong", to:"mind_rattle" }
     ]
   },
-
-  glass_family: {
-    title: "Family of Glass",
-    text: "Hoods of mirrored panes watch from a balcony. They approve when you falter.",
-    choices: [
-      { label: "Stand your ground (Will DC 12)", check: { stat: "will", dc: 12, success: "civ_ok", fail: "shard_ending" } },
-      { label: "Break line and flee", to: "shard_ending" }
+  glass_family:{ title:"Family of Glass", text:"Hoods of mirrored panes watch from a balcony. They approve when you falter.",
+    choices:[
+      { label:"Stand your ground (Will DC 12)", check:{ stat:"will", dc:12, success:"civ_ok", fail:"shard_ending" } },
+      { label:"Break line and flee", to:"shard_ending" }
     ]
   },
-
-  knight_arrives: {
-    title: "Amethyst Knight",
-    text: "A violet silhouette carves a corridor through the bloom. The crowd cheers. No names are exchanged.",
-    choices: [
-      { label: "Fight alongside the Knight (Force DC 11)", check: { stat: "force", dc: 11, success: "core_glow", fail: "heart_bite" } },
-      { label: "Hold the Bind and cover triage", to: "valor_ending" }
+  knight_arrives:{ title:"Amethyst Knight", text:"A violet silhouette carves a corridor through the bloom. The crowd cheers. No names are exchanged.",
+    choices:[
+      { label:"Fight alongside the Knight (Force DC 11)", check:{ stat:"force", dc:11, success:"core_glow", fail:"heart_bite" } },
+      { label:"Hold the Bind and cover triage", to:"valor_ending" }
     ]
   },
-
-  core_glow: {
-    title: "Core Exposed",
-    text: "The shard-heart shows a crack like a smile. The hum drops to a purr.",
-    choices: [
-      { label: "Sever the heart, end the bloom (Will DC 12)", check: { stat: "will", dc: 12, success: "knight_ending", fail: "shard_ending" } },
-      { label: "Spare it, listen to the whisper (Insight DC 12)", check: { stat: "insight", dc: 12, success: "prism_ending", fail: "shard_ending" } }
+  core_glow:{ title:"Core Exposed", text:"The shard-heart shows a crack like a smile. The hum drops to a purr.",
+    choices:[
+      { label:"Sever the heart, end the bloom (Will DC 12)", check:{ stat:"will", dc:12, success:"knight_ending", fail:"shard_ending" } },
+      { label:"Spare it, listen to the whisper (Insight DC 12)", check:{ stat:"insight", dc:12, success:"prism_ending", fail:"shard_ending" } }
     ]
   },
 
   // ENDINGS
-  valor_ending: {
-    type: "ending",
-    title: "ENDING: Valor Sigiled",
-    blurb: "You kept the peace. Under Caelen Bind, you saved more lives than anyone counted. Not shining, steady.",
-  },
-  shard_ending: {
-    type: "ending",
-    title: "ENDING: Shard Whispered",
-    blurb: "The crystal learned your rhythm. It will hum your name in other plazas. You survive, changed.",
-  },
-  prism_ending: {
-    type: "ending",
-    title: "ENDING: Prism Brokered",
-    blurb: "You traded symmetry for time. The outbreak sleeps, not dies. Some debts are paid in reflections.",
-  },
-  knight_ending: {
-    type: "ending",
-    title: "ENDING: Knight’s Shadow",
-    blurb: "Side by side with amethyst light, you made the cut that mattered. No names given. None needed.",
-  },
+  valor_ending:{ type:"ending", title:"ENDING: Valor Sigiled", blurb:"You kept the peace. Under Caelen Bind, you saved more lives than anyone counted. Not shining, steady." },
+  shard_ending:{ type:"ending", title:"ENDING: Shard Whispered", blurb:"The crystal learned your rhythm. It will hum your name in other plazas. You survive, changed." },
+  prism_ending:{ type:"ending", title:"ENDING: Prism Brokered", blurb:"You traded symmetry for time. The outbreak sleeps, not dies. Some debts are paid in reflections." },
+  knight_ending:{ type:"ending", title:"ENDING: Knight’s Shadow", blurb:"Side by side with amethyst light, you made the cut that mattered. No names given. None needed." },
 };
 
-/*** AUDIO (optional lightweight ambience) ***/
-const audio = new Audio();
-audio.src = ""; // (optional) put a loop mp3 path here if you want ambient
-audio.loop = true;
-audio.volume = 0.25;
-let muted = true;
+/*** AUDIO (optional ambient) ***/
+const audio = new Audio(); audio.src = ""; audio.loop = true; audio.volume = 0.25; let muted = true;
 
 /*** ENGINE ***/
 const elScene = document.getElementById("scene");
@@ -314,14 +255,18 @@ function renderScene(id){
   const s = SCENES[id];
   if(!s){ elScene.innerHTML = `<div class="title">ERROR</div><div class="text">Scene not found.</div>`; return; }
 
-  // Ending
+  // Ending → show QR.jpg instead of button
   if (s.type === "ending"){
     elScene.innerHTML = `
       <div class="ending">
         <h2>${s.title}</h2>
         <p>${s.blurb}</p>
         <div class="cta">
-          <a class="btn primary" href="${DISCORD_LINK}" target="_blank" rel="noopener">Enjoyed playing this short webgame? Come play with us for real here!</a>
+          <div class="qr">
+            <img src="QR.jpg" alt="Scan to join our Discord" loading="eager" />
+            <div class="small" style="text-align:center;color:#d9c7ff">Scan to join our Discord</div>
+          </div>
+          <a class="btn primary" href="${DISCORD_LINK}" target="_blank" rel="noopener">Or tap here if the QR doesn’t scan</a>
           <button class="btn" id="restart">Restart</button>
         </div>
       </div>
@@ -390,11 +335,9 @@ function doCheck({stat, dc}, cb){
 muteBtn.onclick = () => {
   muted = !muted;
   muteBtn.textContent = muted ? "sound off" : "sound on";
-  if (!audio.src) return; // no file set
-  if (muted) { audio.pause(); }
-  else {
-    audio.play().catch(()=>{}); 
-  }
+  if (!audio.src) return;
+  if (muted) audio.pause();
+  else audio.play().catch(()=>{});
 };
 
 // Start
