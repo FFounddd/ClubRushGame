@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Amethyst Knight — House Cannith Index</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root{
+      --bg:#000; --fg:#f4e7ff; --fx:#b5179e; --fx2:#8a2be2; --muted:#caa9ff;
+      --border:#5c0a5b; --border-soft:#5c0a5b66;
+    }
+    @font-face { font-family: "ULTRAKILL";
+      src: url("./fonts/ULTRAKILL.ttf") format("truetype");
+      font-display: swap;
+    }
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);
+      font:14px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;}
+    body, h1, h2, button, input { font-family: ULTRAKILL, Aldrich, Orbitron, system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    .page{
+      min-height:100dvh;
+      background:
+        radial-gradient(circle at 35% -10%, #2d0036 0%, rgba(7,0,7,0.8) 55%, #000 100%),
+        radial-gradient(ellipse at 80% 80%, rgba(181,23,158,.12), transparent 40%);
+    }
+    .max{max-width:1100px;margin:0 auto;padding:24px;}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+    header .badge{display:flex;align-items:center;gap:8px;color:#eabdf5;
+      letter-spacing:.18em;text-transform:uppercase;font-size:11px;}
+    header h1{margin:6px 0 0;font-size:clamp(24px,5vw,48px);font-weight:900;color:#f7d9ff;
+      text-shadow:0 0 18px rgba(255,0,255,.18);}
+    header p{margin:8px 0 0;color:#e8d9ffcc;}
+
+    .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0;}
+    .tab{border:1px solid var(--border);padding:8px 12px;border-radius:999px;font-size:13px;letter-spacing:.04em;
+      color:#e6c6ffcc;background:transparent;cursor:pointer;}
+    .tab:hover{border-color:#d96ae8;color:#fff;}
+    .tab.active{background:rgba(181,23,158,.28);border-color:#d96ae8;color:#fff;}
+
+    .frame{position:relative;border:1px solid #5c0a5b; background:rgba(6,0,8,.7);
+      border-radius:24px;padding:16px;box-shadow:0 0 60px rgba(123,31,162,.15);}
+    .traffic{display:flex;gap:6px;align-items:center;}
+    .dot{width:12px;height:12px;border-radius:50%;opacity:.8;}
+    .r{background:#ef4444cc}.y{background:#f59e0bcc}.g{background:#22c55ecc}
+    .term-hint{margin-left:8px;color:#e6c6ff99;letter-spacing:.18em;text-transform:uppercase;font-size:11px;}
+
+    .section{border:1px solid var(--border-soft);background:rgba(0,0,0,.45);border-radius:16px;padding:16px;}
+    .section + .section{margin-top:14px;}
+    .sect-head{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+    .icon{width:22px;height:22px;display:grid;place-items:center;border:1px solid #df9cff44;background:#00000066;border-radius:10px;color:#f6c1ff;font-size:12px;}
+    .sect-title{font-weight:600;letter-spacing:.06em;color:#f6c1ff;font-size:16px;}
+    .small{color:#d6b8ff99;font-size:12px;}
+
+    .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;}
+    .card{border:1px solid var(--border-soft);background:rgba(0,0,0,.38);border-radius:14px;padding:12px;}
+    .k{font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:#e6c6ffcc;}
+    .v{margin-top:4px;font-weight:600;color:#fff;}
+    .list{padding-left:18px;}
+    .list li{margin:6px 0;}
+
+    .links{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;}
+    .a{display:flex;align-items:center;gap:10px;border:1px solid var(--border-soft);background:rgba(0,0,0,.4);
+      border-radius:12px;padding:12px;color:#f7eaff;text-decoration:none;}
+    .a:hover{border-color:#d96ae8;}
+    .btn{border:1px solid var(--border);color:#f7eaff;background:transparent;border-radius:8px;padding:6px 10px;font-size:12px;cursor:pointer;}
+    .btn:hover{background:#b5179e33;border-color:#d96ae8;}
+
+    footer{text-align:center;color:#bfa3ffcc;font-size:12px;margin:18px 0 8px;}
+
+    /* CRT scanlines */
+    .frame::after{content:\"\";position:absolute;inset:0;pointer-events:none;
+      background:repeating-linear-gradient(0deg, rgba(255,255,255,0.02) 0 2px, rgba(0,0,0,0) 2px 4px);
+      mix-blend-mode:overlay;opacity:.35;border-radius:24px;animation:flicker 6s steps(10) infinite;}
+    @keyframes flicker{0%,100%{opacity:.38}50%{opacity:.28}}
+
+    @media (max-width:640px){.row{flex-direction:column;align-items:flex-start;}}
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="max">
+      <header>
+        <div class="row">
+          <div class="badge">
+            <span>🛠️</span><span>House Cannith // Asset Record AK-01</span>
+          </div>
+          <button class="btn" id="soundBtn">sound off</button>
+        </div>
+        <h1>AMETHYST KNIGHT — INDEX</h1>
+        <p>House Cannith R&amp;D // Project Amethyst</p>
+      </header>
+
+      <nav class="tabs" id="tabs"></nav>
+
+      <div class="frame">
+        <div class="row" style="margin-bottom:10px;">
+          <div class="traffic"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span></div>
+          <div class="term-hint">Cannith/ops/ak-index — r/o</div>
+        </div>
+        <div id="view"></div>
+      </div>
+
+      <footer>
+        © <span id="yr"></span> House Cannith R&amp;D — Project Amethyst • Index compiled for field operators and artificers
+      </footer>
+    </div>
+  </div>
+
+  <script>
+    // ===== CONFIG (mirrors your React version) =====
+    const CONFIG = {
+      title: "AMETHYST KNIGHT — INDEX",
+      subtitle: "House Cannith // Asset Record AK-01",
+      canithSeal: "House Cannith R&D // Project Amethyst",
+      links: { dossier: "#", incident: "#", requisitions: "#", discord: "#" },
+      oath: "Under the Seal of Cannith, I maintain the Bound Peace. I do not draw steel against the innocent. I do not yield the index to chaos. I report truthfully to my artificers and keep the line intact.",
+      specs: [
+        { k: "Armor Chassis", v: "Knight-Frame Mk.IV (Amethyst Inlay)" },
+        { k: "Core", v: "Shard-Heart A-01 // Resonant" },
+        { k: "Drive", v: "Runic Servo Array v3.7" },
+        { k: "Failsafe", v: "Caelen Sigil — Peace Bind" },
+        { k: "Power", v: "Crystal Bloom Reclaimer // 60Hz hum" },
+      ],
+      opsTips: [
+        "Keep civilians behind the bind. Fear spreads faster than glass.",
+        "Cut infection supply lines; do not spar with the heart.",
+        "If the shard sings in your voice, step away and call it in.",
+        "Log your choices. Cannith learns from iteration.",
+      ],
+      logs: [
+        { id: "C-17", when: "998 YK — Lharvion 9", text: "Festival outbreak contained; Priveon sighted; armor integrity at 63%." },
+        { id: "C-18", when: "998 YK — Lharvion 12", text: "Rail-junction growth excised; Ori signal noted; no civilian loss." },
+        { id: "C-19", when: "998 YK — Barrakas 1", text: "Mirror-lane anomaly; Family of Glass interference; partial data damaged." },
+      ],
+    };
+
+    const TABS = [
+      { k: "brief", label: "MISSION BRIEF" },
+      { k: "specs", label: "ARMOR SPECS" },
+      { k: "procedures", label: "PROCEDURES" },
+      { k: "telemetry", label: "TELEMETRY" },
+      { k: "logs", label: "INCIDENT LOGS" },
+      { k: "oath", label: "OATH" },
+      { k: "links", label: "LINKS" },
+    ];
+
+    const view = document.getElementById("view");
+    const tabsEl = document.getElementById("tabs");
+    const yearEl = document.getElementById("yr");
+    yearEl.textContent = new Date().getFullYear();
+
+    let current = "brief";
+
+    function setTab(k){
+      current = k;
+      renderTabs();
+      renderView();
+      clickSFX();
+    }
+
+    function renderTabs(){
+      tabsEl.innerHTML = "";
+      TABS.forEach(t => {
+        const b = document.createElement("button");
+        b.className = "tab" + (current === t.k ? " active" : "");
+        b.textContent = t.label;
+        b.onclick = () => setTab(t.k);
+        tabsEl.appendChild(b);
+      });
+    }
+
+    function section(title, bodyHTML){
+      return `
+        <div class="section">
+          <div class="sect-head">
+            <div class="icon">♦</div>
+            <div class="sect-title">${title}</div>
+          </div>
+          <div>${bodyHTML}</div>
+        </div>
+      `;
+    }
+
+    function renderView(){
+      if (current === "brief"){
+        view.innerHTML = `
+          ${section("Mission Brief", `
+            <p>Under House Cannith Seal: You are reading an extract from the Amethyst Knight Index. The bearer of the shard-heart operates under the Caelen Peace Bind. The Knight is permitted to cut infections, secure civilians, and sever crystal supply lines. Do not compel the Knight to reveal identity while the Bind holds.</p>
+            <ul class="list">
+              ${CONFIG.opsTips.map(t => `<li>${t}</li>`).join("")}
+            </ul>
+          `)}
+        `;
+      }
+      else if (current === "specs"){
+        view.innerHTML = `
+          ${section("Armor Specifications", `
+            <div class="cards">
+              ${CONFIG.specs.map(s => `
+                <div class="card">
+                  <div class="k">${s.k}</div>
+                  <div class="v">${s.v}</div>
+                </div>
+              `).join("")}
+            </div>
+          `)}
+        `;
+      }
+      else if (current === "procedures"){
+        view.innerHTML = `
+          ${section("Standard Procedures", `
+            <ol class="list">
+              <li>Establish perimeter under Bind. Artificers to outer ring; triage to inner ring.</li>
+              <li>Track resonance source. Cut lines feeding the heart; avoid direct negotiation with the shard.</li>
+              <li>Coordinate with Orien rails to reroute civilians; log every seal breach.</li>
+              <li>On mirror-lane anomalies, deploy reflective covers; avoid eye contact with self-similar apparitions.</li>
+              <li>If Ori’s signal issues contradict Cannith orders, hold position and request adjudication.</li>
+            </ol>
+          `)}
+        `;
+      }
+      else if (current === "telemetry"){
+        view.innerHTML = `
+          ${section("Telemetry & Resonance", `
+            <div class="cards">
+              <div class="card"><div class="k">Resonance</div><div class="v">60Hz hum (stable)</div></div>
+              <div class="card"><div class="k">Shard Heat</div><div class="v">43°C (edge), 71°C (core)</div></div>
+              <div class="card"><div class="k">Sigil</div><div class="v">Caelen Trace — intact</div></div>
+            </div>
+            <p class="small" style="margin-top:8px">Note: Telemetry values refresh on engagement. Deviations &gt; 12% trigger lockdown.</p>
+          `)}
+        `;
+      }
+      else if (current === "logs"){
+        view.innerHTML = `
+          ${section("Incident Logs (Redacted)", `
+            <div class="cards">
+              ${CONFIG.logs.map(L => `
+                <div class="card">
+                  <div class="row small"><span>Incident ${L.id}</span><span>${L.when}</span></div>
+                  <p style="margin-top:6px">${L.text}</p>
+                </div>
+              `).join("")}
+            </div>
+          `)}
+        `;
+      }
+      else if (current === "oath"){
+        view.innerHTML = `
+          ${section("Oath Under Seal", `
+            <blockquote>Under the Seal of Cannith, I maintain the Bound Peace. I do not draw steel against the innocent. I do not yield the index to chaos. I report truthfully to my artificers and keep the line intact.</blockquote>
+            <p class="small" style="margin-top:8px">Witnessed by: Cannith R&amp;D / Project Amethyst</p>
+          `)}
+        `;
+      }
+      else if (current === "links"){
+        view.innerHTML = `
+          ${section("References & Links", `
+            <div class="links">
+              <a class="a" href="${CONFIG.links.dossier}" target="_blank" rel="noopener">📘 <span>Dossier (Public)</span></a>
+              <a class="a" href="${CONFIG.links.incident}" target="_blank" rel="noopener">📡 <span>Incident Channel</span></a>
+              <a class="a" href="${CONFIG.links.requisitions}" target="_blank" rel="noopener">🧰 <span>Requisitions</span></a>
+              <a class="a" href="${CONFIG.links.discord}" target="_blank" rel="noopener">🔊 <span>Ops Comms (Discord)</span></a>
+            </div>
+          `)}
+        `;
+      }
+    }
+
+    // ===== Optional WebAudio SFX =====
+    let audioCtx=null, hum=null, muted=true;
+    function ensureAC(){ if(!audioCtx){ const AC=window.AudioContext||window.webkitAudioContext; if(!AC) return null; audioCtx=new AC(); } return audioCtx; }
+    function clickSFX(freq=240){ if(muted) return; const ctx=ensureAC(); if(!ctx) return;
+      const o=ctx.createOscillator(), g=ctx.createGain(); o.type="square"; o.frequency.value=freq; g.gain.value=0.0001;
+      o.connect(g).connect(ctx.destination); o.start();
+      g.gain.exponentialRampToValueAtTime(0.06, ctx.currentTime+0.01);
+      g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime+0.07);
+      o.stop(ctx.currentTime+0.09);
+    }
+    function startHum(){ if(hum||muted) return; const ctx=ensureAC(); if(!ctx) return;
+      const o=ctx.createOscillator(), g=ctx.createGain(); o.type="sawtooth"; o.frequency.value=60; g.gain.value=0.0007;
+      o.connect(g).connect(ctx.destination); o.start(); hum={o,g};
+    }
+    function stopHum(){ if(!hum) return; const ctx=ensureAC(); if(!ctx) return;
+      hum.g.gain.exponentialRampToValueAtTime(0.00001, ctx.currentTime+0.1);
+      hum.o.stop(ctx.currentTime+0.12); hum=null;
+    }
+    const soundBtn=document.getElementById("soundBtn");
+    soundBtn.onclick=()=>{ muted=!muted; soundBtn.textContent=muted?"sound off":"sound on"; if(muted) stopHum(); else startHum(); };
+
+    // init
+    renderTabs(); renderView();
+    // click anywhere to start hum if unmuted later (user gesture requirement)
+    document.body.addEventListener("mousemove", ()=>{ if(!muted) startHum(); }, { once:true });
+  </script>
+</body>
+</html>
